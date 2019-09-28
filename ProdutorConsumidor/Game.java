@@ -2,7 +2,6 @@ import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.AlphaComposite;
-
 import java.awt.Font;
 import java.awt.Color;
 import java.util.concurrent.Semaphore;
@@ -32,30 +31,30 @@ public class Game extends JPanel{
   }
 
   private void init(){
-    new Thread(this::spawnZombie).start();
-    new Thread(this::killZombies).start();
+    new Thread(this::spawnZombie).start(); //Chamando a thread do produtor
+    new Thread(this::killZombies).start(); //Chamando a thread do consumidor
   }
 
   //Thread Produtor
   public void spawnZombie(){
     try{
       for(;;){
-        empty.acquire();
-        mutex.acquire();
+        empty.acquire(); //Check se existe zombies pra criar
+        mutex.acquire(); //Check se o buffer nao esta sendo usando
         //Area Critica
-        Zombie zombie = new Zombie();
-        zombie.setPosition(Const.WINDOW_WIDTH - 150, Const.WINDOW_HEIGHT - 200);
-        if (zIndex > 0){
-          Zombie prev = zombies.get(zIndex - 1);
-          if (prev.getX() > Const.WINDOW_WIDTH - 150){
-            zombie.setX(prev.getX() + 40);
+        Zombie zombie = new Zombie(); //Cria um zombizao lindao ai
+        zombie.setPosition(Const.WINDOW_WIDTH - 150, Const.WINDOW_HEIGHT - 200); //Move ele para o spawn
+        if (zIndex > 0){ //Caso se o ultimo zombie esteja longe spawn
+          Zombie prev = zombies.get(zIndex - 1); //Pega o ultimo zombie
+          if (prev.getX() > Const.WINDOW_WIDTH - 150){ //Se a posicao dele for maior que a do spawn
+            zombie.setX(prev.getX() + 40); //Move ele para atras do ultimo zombie
           }
         }
         zIndex++;
         this.zombies.add(zombie);
         //Fim  Critica
-        mutex.release();
-        full.release();
+        mutex.release(); //Desbloqueia a buffer
+        full.release();  //Adiciona um zombie ao semaforo
         Thread.sleep((int)(2500 * main.speedIN()));
       }
     }catch(Exception e){
@@ -67,14 +66,13 @@ public class Game extends JPanel{
   public void killZombies(){
     try{
       for(;;){
-        mutex.acquire();
-        if(zIndex != 0){
-          Zombie zombie = zombies.getFirst();
-          if (zombie.getX() <= Const.WINDOW_WIDTH ){
-        
-            hero.fire();
-            hero.setSpeedAnimation((1 - main.speedOUT()) * 4f + 1f);
-            if(zombie.takeDamage()){
+        mutex.acquire(); //Bloqueia a buffer
+        if(zIndex != 0){ //Check se existe algum zombie
+          Zombie zombie = zombies.getFirst(); //Pega o primeiro zombie no buffer
+          if (zombie.getX() <= Const.WINDOW_WIDTH ){ //Check se o zombie esta no raio de tiro
+            hero.fire(); //Seta a animacao do hero para atirar
+            hero.setSpeedAnimation((1 - main.speedOUT()) * 4f + 1f); //Muda a velocidade da animacao do tiro
+            if(zombie.takeDamage()){ //Ti
               full.acquire();
               //mutexDied.acquire();
               dies.add(zombie);
