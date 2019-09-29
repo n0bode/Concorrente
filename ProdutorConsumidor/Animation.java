@@ -80,7 +80,7 @@ public class Animation{
       return;
     }
 
-  	int maxTileX = this.src.getWidth() / sizeX; //Quantidade maxima de tiles em X
+		int maxTileX = this.src.getWidth() / sizeX; //Quantidade maxima de tiles em X
     int x = this.currentFrame % maxTileX; //Posicao x do tile
     int y = this.currentFrame / maxTileX; //Posicao y do tile
 		
