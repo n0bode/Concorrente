@@ -1,20 +1,29 @@
+/****************************************************************
+* Autor: Paulo Rodrigues Camacan    
+* Matricula: 201810829
+* Inicio: 25/09/2019
+* Ultima alteracao: 29/09/2019
+* Nome: Zombie
+* Funcao: Contem a animacao e status dos zombie
+****************************************************************/
+
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
 import java.awt.Color;
 
 public class Zombie extends Position{
-  private Animation idleAnim;
-  private Animation walkAnim;
+  private Animation idleAnim; //Animacao de parado
+  private Animation walkAnim;	//Animacao de andando
 
-  private Animation dyingAnim;
-  private Animation takeAnim;
-  private Animation currentAnimation;
+  private Animation dyingAnim; //Animacao de morte
+  private Animation takeAnim;	 //Levando tiro
+  private Animation currentAnimation; //Atual Animacao
 
-  private int life;
-  public String state;
-  public float alpha = 1;
+  private int life; //Vida atual do zombie
+  private final int maxLife = 5; //Vida maxima
 
-  private final int maxLife = 5;
+  public String state; //Estado do zombie
+  public float alpha = 1; //Transparencia do zombie
 
   public Zombie (){
     this.walkAnim = new Animation(Icons.SPRITE, 45, 45);
@@ -34,8 +43,8 @@ public class Zombie extends Position{
     this.dyingAnim.setLoop(false);
     this.dyingAnim.setSpeed(2);
 
-    this.currentAnimation = this.walkAnim;
-    this.life = maxLife;
+    this.currentAnimation = this.walkAnim; //Inicia a animacao em andando
+    this.life = maxLife; //Inicia a vida com a vida maxima
   }
 
   /* ***************************************************************
@@ -45,7 +54,7 @@ public class Zombie extends Position{
   *************************************************************** */
   public boolean takeDamage(){
     life--;
-    if (life <= 0){
+    if (life <= 0){ //Se o zombie morrer
       life = 0;
       this.currentAnimation = dyingAnim; //Seta a animacao para morrer
       return true; //Returna true se morre

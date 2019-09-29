@@ -1,3 +1,11 @@
+/****************************************************************
+* Autor: Paulo Rodrigues Camacan    
+* Matricula: 201810829
+* Inicio: 12/08/2019
+* Ultima alteracao: 29/09/2019
+* Nome: Animation
+* Funcao: Desenha a sequencia de tiles do sprite
+****************************************************************/
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
 
@@ -15,7 +23,7 @@ public class Animation{
   private boolean loop = true;     //Se a animacao faz um loop
 	
   public Animation(BufferedImage src, int size){
-		this.Animation(src, size, size);
+		this(src, size, size);
 	}
 
 	public Animation(BufferedImage src, int sizeX, int sizeY){

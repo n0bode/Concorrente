@@ -1,3 +1,11 @@
+/****************************************************************
+* Autor: Paulo Rodrigues Camacan    
+* Matricula: 201810829
+* Inicio: 25/10/2019
+* Ultima alteracao: 29/10/2019
+* Nome: Position
+* Funcao: Guardar as coodernadas x e y de algo
+****************************************************************/
 
 public abstract class Position{
   protected int x;

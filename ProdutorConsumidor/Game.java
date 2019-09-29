@@ -1,8 +1,16 @@
+/****************************************************************
+* Autor: Paulo Rodrigues Camacan    
+* Matricula: 201810829
+* Inicio: 25/10/2019
+* Ultima alteracao: 29/10/2019
+* Nome: Game
+* Funcao: Desenha o 'game' na tela
+****************************************************************/
+
 import javax.swing.JPanel;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.AlphaComposite;
-import java.awt.Font;
 import java.awt.Color;
 import java.util.concurrent.Semaphore;
 import java.util.LinkedList;
@@ -13,21 +21,20 @@ public class Game extends JPanel{
   private final Semaphore mutex = new Semaphore(1); //Lock da variavel zIndex e Zombies list
   //private final Semaphore mutexDied = new Semaphore(1);
 
-  private final LinkedList<Zombie> zombies = new LinkedList<Zombie>(); //ZombieList
-  private volatile LinkedList<Zombie> dies = new LinkedList<Zombie>();
+  private final LinkedList<Zombie> zombies = new LinkedList<Zombie>(); //Buffer para o zombies
+  private volatile LinkedList<Zombie> dies = new LinkedList<Zombie>(); //Lista de zombies mortos
 
-  private final MainWindow main;
-  private final Hero hero;
-
-  private int zIndex = 0;
+  private final MainWindow main; //Ponteiro para a janela principal
+  private final Hero hero;       //O Unico sobrevivente do mundo logo apos o java ter consumido o mundo
+  private int zIndex = 0;				 //Quantidade de zombies criados
 
   public Game(MainWindow main){
     super();
     this.main = main;
     this.hero = new Hero();
-    this.hero.setPosition(Const.WINDOW_WIDTH / 6, (Const.WINDOW_HEIGHT - 200));
-    this.setBounds(0, 0, Const.WINDOW_WIDTH,  Const.WINDOW_HEIGHT - 100);
-    this.init();
+    this.hero.setPosition(Const.WINDOW_WIDTH / 6, (Const.WINDOW_HEIGHT - 200)); //Seta a posicao do hero na tela
+    this.setBounds(0, 0, Const.WINDOW_WIDTH,  Const.WINDOW_HEIGHT - 100);       //Seta o tamanho do canvas
+    this.init(); //Chama as threads
   }
 
   private void init(){
@@ -50,15 +57,15 @@ public class Game extends JPanel{
             zombie.setX(prev.getX() + 40); //Move ele para atras do ultimo zombie
           }
         }
-        zIndex++;
+        zIndex++; //Um zombie foi criado
         this.zombies.add(zombie);
         //Fim  Critica
         mutex.release(); //Desbloqueia a buffer
         full.release();  //Adiciona um zombie ao semaforo
-        Thread.sleep((int)(2500 * main.speedIN()));
+        Thread.sleep((int)(2500 * main.speedIN())); //Coloca o produto para dormir
       }
     }catch(Exception e){
-      System.out.println(e.getMessage());;
+      System.out.println(e.getMessage());
     }
   }
 
@@ -72,25 +79,24 @@ public class Game extends JPanel{
           if (zombie.getX() <= Const.WINDOW_WIDTH ){ //Check se o zombie esta no raio de tiro
             hero.fire(); //Seta a animacao do hero para atirar
             hero.setSpeedAnimation((1 - main.speedOUT()) * 4f + 1f); //Muda a velocidade da animacao do tiro
-            if(zombie.takeDamage()){ //Ti
-              full.acquire();
+            if(zombie.takeDamage()){ //Verdade se o zombie morrer
+              full.acquire(); //Indica que um zombie foi removido
               //mutexDied.acquire();
-              dies.add(zombie);
-              zombies.removeFirst();
-              --zIndex;
+              dies.add(zombie);	//Adicionar o zombie morto a lista de morto
+              zombies.removeFirst(); //Remove o zombie da lista de zombies
+              --zIndex; //Remove um zombie do tamanho do buffer
               //mutexDied.release();
-              empty.release();
+              empty.release(); //Indica que um zombie pode ser criado
             }
           }else{
             hero.idle();
             //hero.setSpeedAnimation(0.1f);
           }
         }else{
-          hero.idle();
-          hero.setSpeedAnimation(0.1f);
+          hero.idle();		//Faz com o hero fique esperando ateh aparecer um zombie
         }
-        mutex.release();
-        Thread.sleep((int)(1500 * main.speedOUT()));
+        mutex.release(); //Libera o buffer
+        Thread.sleep((int)(1500 * main.speedOUT())); //Coloca o consumidor para dormir
       }
     }catch(Exception e){
       System.out.println(e);
@@ -102,48 +108,50 @@ public class Game extends JPanel{
     super.paintComponent(g);
     Graphics2D g2 = (Graphics2D)g.create();
     
-    g2.drawImage(Icons.BACKGROUND, 0, 0,  null);
-    g2.setColor(Color.red);
+    g2.drawImage(Icons.BACKGROUND, 0, 0,  null); //Desenha o plano de fundo
 
-    g2.setFont(new Font("Arial", Font.PLAIN, 12));
-    g2.drawString("ALIVE : " + zIndex, 20, 20);
-    this.hero.draw(g2);
-
-    g2.drawImage(Icons.BARRICADE, Const.WINDOW_WIDTH / 4, (Const.WINDOW_HEIGHT - 100) - 75, null);;
+    g2.setColor(Color.red); 					 //Seta a cor da font
+    g2.setFont(Const.FONT); 					 //Seta  a fonte
+    g2.drawString("ALIVE : " + zIndex, 20, 20); //Mostra o texto na tela
+    this.hero.draw(g2);	//Desenha o hero
+		
+		//Desenha a barricada
+    g2.drawImage(Icons.BARRICADE, Const.WINDOW_WIDTH / 4, (Const.WINDOW_HEIGHT - 100) - 75, null);
     for(int i = 0; i < zIndex; i++){
       Zombie zombie = zombies.get(i);
-      zombie.draw(g2);
+      zombie.draw(g2); //Desenha o zombie
 
-      if (zombie == zombies.getFirst()){
-        if(zombie.getX() <= Const.WINDOW_WIDTH / 4 + 10){
-          zombie.idle();
+      if (i == 0){ //Se o zombie for o primeiro
+        if(zombie.getX() <= Const.WINDOW_WIDTH / 4 + 10){ //Se o Zombie estiver na frente da barricada
+          zombie.idle(); //Para ela
           continue;
         }
         //zombie.walk();
-        if(!zombie.isDead())
-          zombie.addPosition(-10, 0);
+        if(!zombie.isDead()) //Se zombie nao estiver morto
+          zombie.addPosition(-10, 0); //Move a zombie
       }else{
-        Zombie prev = zombies.get(i - 1);
-        if(zombie.getX() > prev.getX() + 40){
-          zombie.addPosition(-10, 0);
+        Zombie prev = zombies.get(i - 1); //Pega o zombie da frente
+        if(zombie.getX() > prev.getX() + 40){ //Se esse zombie estiver atras do zombie da frente
+          zombie.addPosition(-10, 0); //Continua movendo
          // zombie.walk();
         }else{
-          if(prev.state == "idle")
-            zombie.idle();
-          zombie.setX(prev.getX() + 40);
+          if(prev.state == "idle") //Se o zombie da frente estiver parado
+            zombie.idle(); //Este para
+          zombie.setX(prev.getX() + 40); //E vai para posicao anteiro ao da frente
         }
       }
     }
-  
+  	
+		//Aqui mostra os zombies mortos, especificamente animacao
     for(int i = 0; i < dies.size(); i++){
-      Zombie dead = dies.get(i);
-      if(dead.alpha <= 0){
+      Zombie dead = dies.get(i);	
+      if(dead.alpha <= 0){ //Remove caso o zombie desapareca
         this.dies.removeFirst();
         continue;
       }
-      g2.setComposite(AlphaComposite.SrcOver.derive(dead.alpha));
-      dead.alpha -= 0.05f;
-      dead.draw(g2);
+      g2.setComposite(AlphaComposite.SrcOver.derive(dead.alpha)); //Seta que ira usar alpha
+      dead.alpha -= 0.05f; //Diminui o alpha do zombie
+      dead.draw(g2); //Mostra o zombie morto
     }
   }
 }
