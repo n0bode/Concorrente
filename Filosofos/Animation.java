@@ -8,6 +8,7 @@
 ****************************************************************/
 import java.awt.image.BufferedImage;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
 public class Animation{
   private final BufferedImage src; //Imagem source da sprite
@@ -17,6 +18,7 @@ public class Animation{
   private int startFrame = 0;      //Tile de inicio da animacao
   private int endFrame = 0;				 //Tile do final da animacao
   private int currentFrame = 0;    //Frame atual da animacao
+	private int frameRepeat = 0;
 
   private float speed = 1;         //Velocidade da passagem de frames da animacao
   private float currentTime = 0;   //Tempo atual na qual se encontra o counter da animacao
@@ -39,6 +41,7 @@ public class Animation{
     this.currentFrame = start; //Frame atual para o frame inicio
     this.startFrame = start; //Frame inical
     this.endFrame = end; //Ultimo frame
+		this.frameRepeat = start;
   }
 	
 	/*
@@ -56,6 +59,8 @@ public class Animation{
   }
 
   public void setLoop(boolean loop){
+		if (loop) this.frameRepeat = this.startFrame;
+		else this.frameRepeat = this.endFrame;
     this.loop = loop;
   }
 	
@@ -63,28 +68,31 @@ public class Animation{
 		return this.loop;
 	}
 
-
   public void next(){
     if (currentFrame < this.endFrame){ //Se o frame for menor que o ultimo frame
       this.currentFrame++; //Pula um frame
-    }else if(loop && currentFrame == this.endFrame){ //vai pro frame inicial
-      this.currentFrame = startFrame;
+    }else if(currentFrame == this.endFrame){ //vai pro frame inicial
+      this.currentFrame = frameRepeat;
     }
   }
 
   public void prev(){
-    if (currentFrame > this.startFrame){ //Se o frame atual maio que frame de inicio
+    if (currentFrame < this.endFrame){ //Se o frame atual maio que frame de inicio
       this.currentFrame--; //Decrementa
-    }else if(loop && currentFrame == this.startFrame){ //Se ele for igual ao inical ele loop
-      this.currentFrame = endFrame; //Vai pra o ultimo frame
+    }else if(loop && currentFrame == this.endFrame){ //Se ele for igual ao inical ele loop
+      this.currentFrame = startFrame; //Vai pra o ultimo frame
     }
   }
+
+	public void repeat(int frame){
+		this.frameRepeat = frame;
+	}
 
   public void reset(){
     this.currentFrame = this.startFrame; //Reseta o frame para o prime tile
   }
 
-  public void draw(Graphics2D g, int sx, int sy, int w, int h){
+  public void draw(Graphics2D g, int sx, int sy, int w, int h, float angle){
     if(this.src == null){
       System.out.println("Animation missing image src");
       return;
@@ -104,15 +112,26 @@ public class Animation{
     int dx0 = x * sizeX; //Lado esquero do tile na image
     int dy0 = y * sizeY; //Lado superior do tile na image
 
-    int dx1 = dx0 + sizeX; //Lado direito do tile
+    double cos = Math.cos(angle);
+		double sin = Math.sin(angle);
+
+		int dx1 = dx0 + sizeX; //Lado direito do tile
     int dy1 = dy0 + sizeY; //Lado inferior do tile
+		
 
     if(currentTime >= Const.TICK_PER_SECONDS){ 								//Checkar se o time passou a quantidade de frames permitido
-      for(int i = 0; i < (int)currentTime / Const.TICK_PER_SECONDS; i++) //Quantas vezes o o time possou
-        this.next(); //Pular frame
+      for(int i = 0; i < (int)currentTime / Const.TICK_PER_SECONDS; i++){ //Quantas vezes o o time possou
+				if(this.startFrame < this.endFrame)
+        	this.next(); //Pular frame
+				else
+					this.prev();
+			}
       currentTime = 0; //Zera o time
     }
     currentTime += speed * Const.TICK_PER_SECONDS; //Adiciona o time a velocidade
-    g.drawImage(this.src, sx, sy, sx + w, sy + h, dx0, dy0, dx1, dy1, null); //Mostra a image na posicao do tile
+		BufferedImage tile = this.src.getSubimage(dx0, dy0, this.sizeX, this.sizeY); 
+		Graphics2D cg = (Graphics2D)g.create();
+		cg.rotate(angle, sx + w / 2, sy + h / 2);
+    cg.drawImage(tile, sx, sy, sx+w, sy+h, 0, 0, sizeX, sizeY, null); //Mostra a image na posicao do tile
   }
 }

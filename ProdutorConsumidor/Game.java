@@ -106,13 +106,13 @@ public class Game extends JPanel{
   @Override
   public void paintComponent(Graphics g){
     super.paintComponent(g);
-    Graphics2D g2 = (Graphics2D)g.create();
-    
+    Graphics2D g2 = (Graphics2D)g.create(); 
     g2.drawImage(Icons.BACKGROUND, 0, 0,  null); //Desenha o plano de fundo
 
     g2.setColor(Color.red); 					 //Seta a cor da font
     g2.setFont(Const.FONT); 					 //Seta  a fonte
-    g2.drawString("ALIVE : " + zIndex, 20, 20); //Mostra o texto na tela
+		g2.drawString("MAX_ZOMBIES :" + Const.MAX_ZOMBIES, 10, 15);
+    g2.drawString("ALIVE : " + zIndex, 10, 30); //Mostra o texto na tela
     this.hero.draw(g2);	//Desenha o hero
 		
 		//Desenha a barricada

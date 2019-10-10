@@ -27,19 +27,36 @@ public class Hero extends Position{
     this.currentAnimation = idleAnim; 									 //inicia com ele em idle
   }
 
+  /* ***************************************************************
+  * Metodo: fire
+  * Funcao: muda a animacao do hero para atirar
+  *************************************************************** */
   public void fire(){
     this.currentAnimation = this.fireAnim; //Para a animacao de tiro
-    this.currentAnimation.reset();
-  }
-  
-  public void idle(){
-    this.currentAnimation = this.idleAnim; //Para animacao de parado
-    this.currentAnimation.reset();
+    //this.currentAnimation.reset();
   }
 
+  /* ***************************************************************
+  * Metodo: idle
+  * Funcao: muda a animacao do hero para parado
+  *************************************************************** */
+  public void idle(){
+    this.currentAnimation = this.idleAnim; //Para animacao de parado
+    //this.currentAnimation.reset();
+  }
+
+  /* ***************************************************************
+  * Metodo: setSpeedAnimation
+  * Funcao: Muda a velocidade da animacao atual
+  *************************************************************** */
   public void setSpeedAnimation(float speed){
     this.currentAnimation.setSpeed(speed); //Seta a velocidade de animacao
   }
+
+  /* ***************************************************************
+  * Metodo: draw
+  * Funcao: desenha o hero na tela
+  *************************************************************** */
 
   public void draw(Graphics2D g){
     this.currentAnimation.draw(g, this.x, this.y, 90, 90); //Desenha a animacao na tela
