@@ -3,7 +3,7 @@
 * Matricula: 201810829
 * Inicio: 25/10/2019
 * Ultima alteracao: 29/10/2019
-* Nome: Position
+* Nome: Rect
 * Funcao: Guardar as coodernadas x e y de algo
 ****************************************************************/
 
@@ -14,6 +14,11 @@ public abstract class Rect{
 	protected int h;
 	protected float angle;
 
+	public void set(int x, int y, int w, int h){
+		this.setPosition(x, y);
+		this.setSize(w, h);
+	}
+
   public void setPosition(int x, int y){
     this.x = x;
     this.y = y;
@@ -23,15 +28,6 @@ public abstract class Rect{
 		this.w = w;
 		this.h = h;
 	}
-
-	public void setAngle(float angle){
-		this.angle = angle;
-	}
-
-  public void mult(float s){
-    this.x *= s;
-    this.y *= s;
-  }
 
   public int getX(){
     return this.x;
@@ -44,12 +40,16 @@ public abstract class Rect{
   public int getY(){
     return this.y;
   }
+	
+	public void setY(int y){
+    this.y = y;
+  }
 
 	public float getAngle(){
 		return this.angle;
 	}
-
-  public void setY(int y){
-    this.y = y;
-  }
+	
+	public void setAngle(float angle){
+		this.angle = angle;
+	}
 }
