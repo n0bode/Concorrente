@@ -4,8 +4,12 @@
 
 ![Kill all the zombies](https://raw.githubusercontent.com/n0bode/Concorrente/master/ProdutorConsumidor/logo.gif)
 
-* [Leitores Escritores](https://github.com/n0bode/Concorrente/tree/master/ProdutorConsumidor)
+* [Leitores Escritores](https://github.com/n0bode/Concorrente/tree/master/LeitorEscritores)
+
+![Meet is so good](https://raw.githubusercontent.com/n0bode/Concorrente/master/LeitorEscritores/logo.gif)
 
 * [Jantas dos Filosofos](https://github.com/n0bode/Concorrente/tree/master/Filosofos)
 
-* Problemas do Trânsito
+![Eat no think](https://raw.githubusercontent.com/n0bode/Concorrente/master/Filosofos/logo.gif)
+
+* [Trânsito e Carros](https://github.com/n0bode/Concorrente/tree/master/Carrinhos)
