@@ -15,3 +15,6 @@
 * [Trânsito e Carros](https://github.com/n0bode/Concorrente/tree/master/Carrinhos)
 
 ![Tank 1990](https://raw.githubusercontent.com/n0bode/Concorrente/master/TankSemaforos/logo.gif)
+
+## Como rodar os projetos
+` javac Principal.java && java Principal && rm *.class `
