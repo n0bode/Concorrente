@@ -1,9 +1,11 @@
 # Algoritmos clássicos de concorrente com interface gráfica usando Swing e Java
 
-* Produtor Consumidor
+* [Produtor Consumidor](https://github.com/n0bode/Concorrente/tree/master/ProdutorConsumidor)
 
-* Leitores Escritores
+![Kill all the zombies](https://raw.githubusercontent.com/n0bode/Concorrente/master/ProdutorConsumidor/logo.gif)
 
-* Jantas dos Filosofos
+* [Leitores Escritores](https://github.com/n0bode/Concorrente/tree/master/ProdutorConsumidor)
 
-* Problemas do trânsito
+* [Jantas dos Filosofos](https://github.com/n0bode/Concorrente/tree/master/Filosofos)
+
+* Problemas do Trânsito
